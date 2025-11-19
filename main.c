@@ -42,8 +42,18 @@ int main(void)
     int frameWidth = guy.width/8;
     int frameHeight = guy.height/9;
 
+    typedef struct{
+        char* name[32];
+        float fps;
+        int frameCount;
+    } AnimationClip;
+
     Rectangle sourceRec = { 0.0f, 0.0f, (float)frameWidth, (float)frameHeight };
     Vector2 position = { 375.0f, 200.0f };
+    int currentFrame = 0;
+
+    int framesCounter = 0;
+    int framesSpeed = 4; 
     
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -53,7 +63,17 @@ int main(void)
     {
         // Update
         //----------------------------------------------------------------------------------
+        framesCounter++;
 
+        if (framesCounter >= (60/framesSpeed))
+        {
+            framesCounter = 0;
+            currentFrame++;
+
+            if (currentFrame == 2) currentFrame = 0;
+
+            sourceRec.x = (float)currentFrame*guy.width/8;
+        }
         //----------------------------------------------------------------------------------
 
         // Draw
