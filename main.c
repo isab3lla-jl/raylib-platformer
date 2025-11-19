@@ -36,6 +36,14 @@ int main(void)
     const int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib platformer");
+
+    Texture2D guy = LoadTexture("resources/AnimationSheet_Character.png");
+
+    int frameWidth = guy.width/8;
+    int frameHeight = guy.height/9;
+
+    Rectangle sourceRec = { 0.0f, 0.0f, (float)frameWidth, (float)frameHeight };
+    Vector2 position = { 375.0f, 200.0f };
     
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -52,7 +60,9 @@ int main(void)
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            DrawText("Press space for a surprise!", 250, 150, 20, GRAY);
+            ClearBackground(RAYWHITE);
+            
+            DrawTextureRec(guy, sourceRec, position, WHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
