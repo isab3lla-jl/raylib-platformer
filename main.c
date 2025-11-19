@@ -46,6 +46,7 @@ int main(void)
         char* name[32];
         float fps;
         int frameCount;
+        int current;
     } AnimationClip;
 
     Rectangle sourceRec = { 0.0f, 0.0f, (float)frameWidth, (float)frameHeight };
