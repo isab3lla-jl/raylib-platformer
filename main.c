@@ -1,11 +1,11 @@
 #include "raylib.h"
 #include "raymath.h"
 
-#define GRAVITY 400
-#define PLAYER_JUMP_SPD 350.0f
+#define GRAVITY 850
+#define PLAYER_JUMP_SPD 500.0f
 #define PLAYER_HOR_SPD 200.0f
 
-#define MAX_ENVIRONMENT_ELEMENTS    5
+#define MAX_ENVIRONMENT_ELEMENTS    10
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -32,7 +32,7 @@ int main(void)
     const int screenWidth = 800;
     const int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - automation events");
+    InitWindow(screenWidth, screenHeight, "raylib - platformer");
 
     // Define player
     Player player = { 0 };
@@ -42,10 +42,13 @@ int main(void)
 
     // Define environment elements (platforms)
     EnvElement envElements[MAX_ENVIRONMENT_ELEMENTS] = {
-        {{ 0, 0, 1000, 400 }, 0, LIGHTGRAY },
+        {{ 0, 0, 1000, 1000 }, 0, LIGHTGRAY },
+        {{ 0, -400, 200, 1000 }, 1, GRAY },
+        {{ 800, -400, 200, 1000 }, 1, GRAY },
         {{ 0, 400, 1000, 200 }, 1, GRAY },
         {{ 300, 200, 400, 10 }, 1, GRAY },
         {{ 250, 300, 100, 10 }, 1, GRAY },
+        {{ 10, 100, 150, 10 }, 1, GRAY },
         {{ 650, 300, 100, 10 }, 1, GRAY }
     };
 
