@@ -57,7 +57,7 @@ int main(void)
     camera.target = player.position;
     camera.offset = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
     camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    camera.zoom = 1.8f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -126,11 +126,6 @@ int main(void)
         camera.target = player.position;
         camera.offset = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
         float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
-
-        // WARNING: On event replay, mouse-wheel internal value is set
-        camera.zoom += ((float)GetMouseWheelMove()*0.05f);
-        if (camera.zoom > 3.0f) camera.zoom = 3.0f;
-        else if (camera.zoom < 0.25f) camera.zoom = 0.25f;
 
         for (int i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
         {
