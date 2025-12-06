@@ -1,6 +1,6 @@
-# Escapa el castillo
+# Escapa del castillo
 
-Escapa elcastillo es mi primer platformer usando c y la biblioteca de raylib.
+Escapa del castillo es mi primer platformer usando c y la biblioteca de raylib.
 
 ## Licencia
 
