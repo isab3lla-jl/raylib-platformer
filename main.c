@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "raymath.h"
+#include "animations.c"
 
 #define GRAVITY 850.0f
 #define PLAYER_JUMP_SPD 500.0f
@@ -30,8 +31,10 @@ typedef struct EnvElement {
     Color color;
 } EnvElement;
 
-
+//Declaring Functions
 Rectangle GetPlayerHitbox(Player player);
+void LoadResources(void);
+void UnloadResources(void);
 
 // ------------------------------------------------------------------------------------
 // Program main entry point
@@ -52,8 +55,8 @@ int main(void)
     player.speed_x = 0;
     player.wallJumpTimer = 0;
     player.canJump = false;
-    player.width = 40.0f; 
-    player.height = 40.0f; 
+    player.width = 24.0f; 
+    player.height = 32.0f; 
 
     // Define environment elements (platforms)
     EnvElement envElements[MAX_ENVIRONMENT_ELEMENTS] = {
@@ -72,9 +75,11 @@ int main(void)
     camera.target = player.position;
     camera.offset = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
     camera.rotation = 0.0f;
-    camera.zoom = 1.8f; 
+    camera.zoom = 2.0f; 
 
     SetTargetFPS(60);
+
+    LoadResources();
     // --------------------------------------------------------------------------------------
 
     // Main game loop
@@ -92,15 +97,22 @@ int main(void)
         if (player.wallJumpTimer > 0) player.wallJumpTimer -= deltaTime;
 
         float target_speed_x = 0;
+        PlayerState newState = PLAYER_IDLE;
         
-        if (player.wallJumpTimer <= 0) 
-        {
-            if (IsKeyDown(KEY_LEFT)) target_speed_x = -PLAYER_HOR_SPD;
-            else if (IsKeyDown(KEY_RIGHT)) target_speed_x = PLAYER_HOR_SPD;
+        if (player.wallJumpTimer <= 0) {
+            if (IsKeyDown(KEY_LEFT)) {
+                target_speed_x = -PLAYER_HOR_SPD;
+                facingRight = false;
+                newState = PLAYER_WALK;
+            }
+            else if (IsKeyDown(KEY_RIGHT)) {
+                target_speed_x = PLAYER_HOR_SPD;
+                facingRight = true;
+                newState = PLAYER_WALK;
+            }
             
             player.speed_x = target_speed_x;
         }
-
         // Movement
         float old_player_x = player.position.x; 
         player.position.x += player.speed_x * deltaTime;
@@ -166,6 +178,7 @@ int main(void)
             if (pressingIntoWall && player.speed > PLAYER_WALL_SLIDE_SPD)
             {
                 player.speed = PLAYER_WALL_SLIDE_SPD;
+                newState = PLAYER_SLIDE;
             }
         }
         
@@ -197,6 +210,34 @@ int main(void)
             
             if (hitObstacle) break; 
         }
+
+        if (!player.canJump) {
+            if (player.speed < 0) {
+            newState = PLAYER_JUMP;
+        }} 
+
+        playerState = newState;
+        
+        switch (playerState) {
+            case PLAYER_IDLE:
+                UpdateAnimation(&idle, deltaTime);
+                break;
+            case PLAYER_WALK:
+                UpdateAnimation(&walk, deltaTime);
+                break;
+            case PLAYER_JUMP:
+                UpdateAnimation(&jump, deltaTime);
+                break;
+            case PLAYER_SLIDE:
+                UpdateAnimation(&wall_slide, deltaTime);
+                break;
+            case PLAYER_HURT:
+                UpdateAnimation(&hurt, deltaTime);
+                break;
+            case PLAYER_DEATH:
+                UpdateAnimation(&death, deltaTime);
+                break;
+        }
         
         player.canJump = (hitObstacle == 1);
         
@@ -213,7 +254,6 @@ int main(void)
             camera.rotation = 0.0f;
             camera.zoom = 1.0f; 
         }
-        
         camera.target = player.position;
         camera.offset = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
         float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
@@ -252,7 +292,8 @@ int main(void)
                 }
 
                 // Player Hitbox
-                DrawRectangleRec(GetPlayerHitbox(player), RED);
+                DrawPlayer(player.position);
+                //DrawRectangleRec(GetPlayerHitbox(player), RED);
 
             EndMode2D();
 
@@ -288,5 +329,13 @@ Rectangle GetPlayerHitbox(Player player)
     float y = player.position.y - player.height;
     
     return (Rectangle){ x, y, player.width, player.height };
+}
+void LoadResources(void)
+{
+    LoadPlayerAnimations();
+}
+void UnloadResources(void)
+{
+    UnloadPlayerAnimations();
 }
 // --------------------------------------------------------------------------------------
