@@ -14,6 +14,7 @@ typedef struct {
     float timer;
     int frameWidth;
     int frameHeight;
+    bool loops;
 } Animation;
 
 typedef enum {
@@ -50,6 +51,7 @@ void LoadPlayerAnimations()
     idle.timer = 0;
     idle.frameWidth = idle.texture.width / idle.frameCount;
     idle.frameHeight = idle.texture.height;
+    idle.loops = true;
 
     // -------- WALK --------
     walk.texture = LoadTexture("resources/character/walk.png");
@@ -59,6 +61,7 @@ void LoadPlayerAnimations()
     walk.timer = 0;
     walk.frameWidth = walk.texture.width / walk.frameCount;
     walk.frameHeight = walk.texture.height;
+    walk.loops = true;
 
     // -------- JUMP --------
     jump.texture = LoadTexture("resources/character/jump.png");
@@ -68,6 +71,7 @@ void LoadPlayerAnimations()
     jump.timer = 0;
     jump.frameWidth = jump.texture.width / jump.frameCount;
     jump.frameHeight = jump.texture.height;
+    jump.loops = true;
     
     // -------- WALL SLIDE --------
     wall_slide.texture = LoadTexture("resources/character/wall_slide.png");
@@ -77,6 +81,7 @@ void LoadPlayerAnimations()
     wall_slide.timer = 0;
     wall_slide.frameWidth = wall_slide.texture.width / wall_slide.frameCount;
     wall_slide.frameHeight = wall_slide.texture.height;
+    wall_slide.loops = true;
     
     // -------- HURT --------
     hurt.texture = LoadTexture("resources/character/hurt.png");
@@ -86,6 +91,7 @@ void LoadPlayerAnimations()
     hurt.timer = 0;
     hurt.frameWidth = hurt.texture.width / hurt.frameCount;
     hurt.frameHeight = hurt.texture.height;
+    hurt.loops = true;
     
     // -------- DEATH --------
     death.texture = LoadTexture("resources/character/death.png");
@@ -95,6 +101,7 @@ void LoadPlayerAnimations()
     death.timer = 0;
     death.frameWidth = death.texture.width / death.frameCount;
     death.frameHeight = death.texture.height;
+    death.loops = false;
 }
 void UnloadPlayerAnimations()
 {
@@ -108,6 +115,10 @@ void UnloadPlayerAnimations()
 void UpdateAnimation(Animation *anim, float delta)
 {
 
+    if (!anim->loops && anim->currentFrame == anim->frameCount - 1) {
+        return; 
+    }
+
     anim->timer += delta;
 
     if (anim->timer >= 1.0f / anim->frameSpeed) {
@@ -115,7 +126,11 @@ void UpdateAnimation(Animation *anim, float delta)
         anim->currentFrame++;
 
         if (anim->currentFrame >= anim->frameCount) {
-            anim->currentFrame = 0;     // Loop
+            if (anim->loops) {
+                anim->currentFrame = 0; // Loop
+            } else {
+                anim->currentFrame = anim->frameCount - 1; // Bloquear en el último frame
+            }
         }
     }
 }
@@ -130,7 +145,6 @@ bool IsAnimationFinished(Animation *anim) //Death animation
 }
 void DrawAnimation(Animation *anim, Vector2 pos)
 {
-
     Rectangle src = {
         anim->frameWidth * anim->currentFrame,
         0,
@@ -138,7 +152,6 @@ void DrawAnimation(Animation *anim, Vector2 pos)
         anim->frameHeight
     };
 
-    // Mirroring sprite
     if (!facingRight)
         src.width = -anim->frameWidth;
 
@@ -163,7 +176,11 @@ void DrawPlayer(Vector2 pos)
             animToDraw = &walk;
             break;
         case PLAYER_JUMP:
-            animToDraw = &jump;
+            if (playerState == PLAYER_HURT) {
+                animToDraw = &hurt;
+            } else {
+                animToDraw = &jump;
+            }
             break;
         case PLAYER_SLIDE:
             animToDraw = &wall_slide;
