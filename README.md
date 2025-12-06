@@ -4,4 +4,4 @@ Escapa del castillo es mi primer platformer usando c y la biblioteca de raylib.
 
 ## Licencia
 
-[MIT](license)
+[MIT](LICENSE)
