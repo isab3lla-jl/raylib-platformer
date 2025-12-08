@@ -7,7 +7,7 @@
 #define PLAYER_HOR_SPD 200.0f
 #define MAX_ENVIRONMENT_ELEMENTS 50
 #define MAX_DANGER_ELEMENTS 20
-#define MAX_WIN_ELEMENTS 1 // Nueva constante
+#define MAX_WIN_ELEMENTS 1
 
 #define PLAYER_WALL_SLIDE_SPD 75.0f
 #define PLAYER_WALL_JUMP_X_SPD 350.0f
@@ -47,10 +47,9 @@ typedef struct Danger {
     Rectangle tileSourceRec;
 } Danger;
 
-// Estructura WinElement (usando tu definición previa)
 typedef struct Win {
     Rectangle rect;
-    int blocking; // 0 para no bloquear movimiento, 1 para bloquear (aunque para victoria, 0 es común)
+    int blocking;
     Color color;
     Rectangle tileSourceRec;
 } Win;
@@ -74,7 +73,6 @@ static GameState gameState = STATE_PLAYING;
 
 Texture2D tilemapTexture;
 
-// Variables de estado de finalización
 static bool gameOver = false;
 static bool win = false;
 
@@ -138,7 +136,7 @@ int main(void)
         {{ 460, -50, 10, 150 }, 0, RED, tile_danger },
     };
 
-    // Define win elements (Nuevo)
+    // Define win elements
     Win winElements[MAX_WIN_ELEMENTS] = {
         {{ 700, -180, 50, 30 }, 0, GREEN, tile_win }, 
     };
